@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        /* table {
+
+        } */
+        body {
+            background-color: lightgray;
+        }
+
+        p {
+            position: absolute;
+            padding: 25px;
+            font-size: 20px;
+            font-weight: bold;
+            left: 15px;
+        }
+
+        form {
+            position: absolute;
+            margin-top: 100px;
+
+        }
+
+        th {
+            font-size: 40px;
+            font-family: 'Courier New', Courier, monospace;
+            background-color: lightblue;
+        }
+
+        td {
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            background-color: lightskyblue;
+
+        }
+
+        td,
+        th {
+            border: 2px solid;
+            padding: 25px;
+            border-radius: 5px;
+        }
+
+        table {
+            border-spacing: 2px;
+
+        }
+
+        .buttons {
+            display: none;
+            position: absolute;
+        }
+
+        td:hover .buttons {
+            display: flex;
+        }
+
+        .orak {
+            background-color: lightcyan;
+        }
+
+        #Mod {
+            border: 2px solid #00bcd4;
+            border-radius: 10px;
+            background-color: #e0f7fa;
+            padding: 40px;
+            width: 175px;
+            height: 325px;
+            position: absolute;
+            top: 100px;
+
+        }
+
+        /* .buttons button {} */
+    </style>
+    <script>
+        const API_URL = 'http://localhost:3000/orarend';
+        let data;
+        async function fetchOrarend() {
+            const res = await fetch(API_URL);
+            data = await res.json();
+
+            for (let i = 0; i < 5; i++) {
+                document.querySelector('.elso_ora').children[i].querySelector('.Ora').textContent += data[i].ora[0] || " "
+                document.querySelector('.masodik_ora').children[i].querySelector('.Ora').textContent += data[i].ora[1] || " "
+                document.querySelector('.harmadik_ora').children[i].querySelector('.Ora').textContent += data[i].ora[2] || " "
+                document.querySelector('.negyedik_ora').children[i].querySelector('.Ora').textContent += data[i].ora[3] || " "
+                document.querySelector('.otodik_ora').children[i].querySelector('.Ora').textContent += data[i].ora[4] || " "
+                document.querySelector('.hatodik_ora').children[i].querySelector('.Ora').textContent += data[i].ora[5] || " "
+                document.querySelector('.hetedik_ora').children[i].querySelector('.Ora').textContent += data[i].ora[6] || " "
+                document.querySelector('.nyolcadik_ora').children[i].querySelector('.Ora').textContent += data[i].ora[7] || " "
+                document.querySelector('.kilencedik_ora').children[i].querySelector('.Ora').textContent += data[i].ora[8] || " "
+            }
+        }
+        async function ModositOrarend(event) {
+            let nap = document.getElementById("Nap").value
+            let trunap;
+            let nap_i;
+            const uzenetDiv = document.getElementById("uzenet");
+            nap = nap.toUpperCase()
+            switch (nap) {
+                case "H":
+                    trunap = "Hétfő"
+                    nap_i = 1;
+                    break;
+                case "K":
+                    trunap = "Kedd"
+                    nap_i = 2;
+                    break;
+                case "SZ":
+                    trunap = "Szerda"
+                    nap_i = 3;
+                    break;
+                case "CS":
+                    trunap = "Csütörtök"
+                    nap_i = 4;
+                    break;
+                case "P":
+                    trunap = "Péntek"
+                    nap_i = 5;
+                    break;
+                default:
+
+            }
+            let truora = data[nap_i - 1].ora
+            let csere_ora = document.getElementById("óra").value
+            let csere = document.getElementById("tantárgy").value
+            data[nap_i - 1].ora[csere_ora - 1] = csere;
+
+            console.log(data[nap_i - 1].ora)
+            const res = await fetch(API_URL, {
+                method: 'PUT', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    nap: trunap,
+                    ora: data[nap_i - 1].ora
+                })
+
+            })
+            return res.json()
+        }
+    </script>
+</head>
+
+<body onload="fetchOrarend()">
+    <div id="Mod">
+        <p>Óra módosítása</p>
+        <form onsubmit="ModositOrarend(event)">
+            <label for="Nap">Nap (H, K, SZ, CS, P)</label><br>
+            <input type="text" id="Nap" name="Nap" value=""><br>
+            <label for="óra">Óra (1-9)</label><br>
+            <input type="number" id="óra" name="óra" value=""><br><br>
+            <label for="tantárgy">Tantárgy megnevezése</label><br>
+            <input type="text" id="tantárgy" name="tantárgy" value=""><br><br>
+            <input type="submit" value="Mentés">
+            <div id="uzenet" style="margin-top: 450px; font-weight: bold; font-size: 20px; color: darkred;"></div>
+
+
+        </form>
+    </div>
+    <table align="center">
+        <tr>
+            <th>Hétfő</th>
+            <th>Kedd</th>
+            <th>Szerda</th>
+            <th>Csütürtök</th>
+            <th>Péntek</th>
+            <th>Óra</th>
+
+        </tr>
+        <tr class="elso_ora">
+
+            <td>
+                <!-- <div>1</div> -->
+                <div class="Ora"></div>
+            </td>
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td class="orak">1</td>
+        </tr>
+        <tr class="masodik_ora">
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td class="orak">2</td>
+        </tr>
+        <tr class="harmadik_ora">
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td class="orak">3</td>
+        </tr>
+        <tr class="negyedik_ora">
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td class="orak">4</td>
+        </tr>
+        <tr class="otodik_ora">
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td class="orak">5</td>
+        </tr>
+        <tr class="hatodik_ora">
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td class="orak">6</td>
+        </tr>
+        <tr class="hetedik_ora">
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td class="orak">7</td>
+        </tr>
+        <tr class="nyolcadik_ora">
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td class="orak">8</td>
+        </tr>
+        <tr class="kilencedik_ora">
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td>
+                <div class="Ora"></div>
+            </td>
+            <td class="orak">9</td>
+        </tr>
+
+    </table>
+
+
+</body>
+
+</html>
